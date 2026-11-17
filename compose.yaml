@@ -1,0 +1,42 @@
+# Local test of the Railway template: the same four images and variables.
+#   HDX_PORT=8080 docker compose up -d --build   then open http://localhost:8080
+# Passwords below are for a local test only; the Railway template generates its own.
+name: hyperdx-railway-test
+services:
+  mongodb:
+    build: ./mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo
+      MONGO_INITDB_ROOT_PASSWORD: local-test-mongo
+    volumes: [mongo-data:/data/db]
+  clickhouse:
+    build: ./clickhouse
+    environment:
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_PASSWORD: local-test-clickhouse
+    volumes: [ch-data:/var/lib/clickhouse]
+  hyperdx:
+    build: ./hyperdx
+    depends_on: [mongodb, clickhouse]
+    environment:
+      PORT: "8080"
+      FRONTEND_URL: http://localhost:${HDX_PORT:-8080}
+      MONGO_URI: mongodb://mongo:local-test-mongo@mongodb:27017/hyperdx?authSource=admin
+      CLICKHOUSE_URL: http://clickhouse:8123
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_PASSWORD: local-test-clickhouse
+      EXPRESS_SESSION_SECRET: "local-test-session-secret-0123456789abcdef"
+      TOKEN_ENCRYPTION_KEY: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+    ports: ["${HDX_PORT:-8080}:8080"]
+  otel-collector:
+    build: ./otel-collector
+    depends_on: [clickhouse, hyperdx]
+    environment:
+      CLICKHOUSE_ENDPOINT: tcp://clickhouse:9000?dial_timeout=10s
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_PASSWORD: local-test-clickhouse
+      OPAMP_SERVER_URL: http://hyperdx:4320
+    ports: ["4318", "13133"]
+volumes:
+  mongo-data:
+  ch-data:
