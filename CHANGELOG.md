@@ -4,6 +4,8 @@
 
 First release of the template.
 
+- README: Deploy on Railway button for the published template (`hyperdx-1`).
+
 - The HyperDX service waits for MongoDB before it starts, so logins keep working when every service restarts at once.
 - The collector waits for ClickHouse before it runs the schema migrations.
 

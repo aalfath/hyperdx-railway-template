@@ -1,3 +1,5 @@
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template/hyperdx-1?utm_medium=integration&utm_source=button&utm_campaign=hyperdx)
+
 # HyperDX on Railway
 
 A Railway template for [HyperDX](https://github.com/hyperdxio/hyperdx) (now also published as ClickStack): open-source observability for logs, traces, metrics, session replays and alerts, stored in ClickHouse and fed by OpenTelemetry.
